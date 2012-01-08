@@ -10,8 +10,8 @@ public class CarregarCampeonato extends DbAdapter {
 		super(contexto);
 	}
 
-	public Campeonato CarregarCampeonato(long idCampeonato) {
-		return new Campeonato("", false);
-	}
+	//public Campeonato CarregarCampeonato(long idCampeonato) {
+		//return new Campeonato("", false);
+	//}
 	
 }
