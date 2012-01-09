@@ -1,4 +1,4 @@
-package campeonato;
+package campeonato.Aplicacao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,12 +6,11 @@ import java.util.List;
 import campeonato.Negocio.Jogador;
 import campeonato.Negocio.Persistencia.CarregarJogador;
 
-import com.joao.mysoccerstandingsv2.R;
-
-import android.app.Activity; 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
@@ -45,8 +44,6 @@ public class SelectPlayers extends Activity {
 	    registerForContextMenu(lstPlayerList);
 	    
 	    btnNewPlayer.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
 			public void onClick(View v) {
 		    	Intent playerformintent = new Intent(SelectPlayers.this,PlayerForm.class);
 		    	startActivityForResult(playerformintent,1);
@@ -54,10 +51,14 @@ public class SelectPlayers extends Activity {
 		});
 	    
 	    btnCreateTournament.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
 			public void onClick(View v) {
 				obterSelecinados();
+				if (obterSelecinados()<2) {
+					Toast.makeText(SelectPlayers.this, "Please select at least two players!", Toast.LENGTH_SHORT).show();
+				} else {
+					openTournamentForm();
+				}
+				
 			}
 		});
 	    
@@ -72,6 +73,10 @@ public class SelectPlayers extends Activity {
 	}
 	
 	
+	private void openTournamentForm(){
+		Intent tournamentformintent = new Intent(SelectPlayers.this,TournamentForm.class);
+    	startActivity(tournamentformintent);
+	}
 	
 	private void carregarJogadores(){
 		CarregarJogador cj = new CarregarJogador(this);
@@ -80,36 +85,33 @@ public class SelectPlayers extends Activity {
 	}
 
 
-	public void createAddPlayer(){
-		List<String> addplayerlabel = new ArrayList<String>();
-		addplayerlabel.add("Add new player...");
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(SelectPlayers.this, android.R.layout.simple_list_item_1, addplayerlabel);
-		addPlayer.setAdapter(adapter);
-		
-	}
-	
 	public void createPlayerList(){
 		lstPlayerList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		ArrayAdapter<Jogador> adapter = new ArrayAdapter<Jogador>(SelectPlayers.this, android.R.layout.simple_list_item_multiple_choice, jogadores);
 		lstPlayerList.setAdapter(adapter);
 	}
 	
-	private void obterSelecinados(){
+	private int obterSelecinados(){
 		
 		long[] ids = lstPlayerList.getCheckItemIds();
 		String texto =" "; 
 		Jogador jogadorAtual;
 		int idAtual;
-		
+		int contadorJogadoresSelecionados = 0;
+				
 		int i;
 		for(i = 0 ; i < ids.length ; i++) {
 			jogadorAtual = (Jogador)(lstPlayerList.getItemAtPosition((int)ids[i]));
 			idAtual = (int)jogadorAtual.Id();
-			
 			texto = texto + idAtual + ", ";
 		}
+		contadorJogadoresSelecionados=ids.length;	
+		texto= texto + "Foram selecionados " + contadorJogadoresSelecionados;
+		Log.d("SelectPlayers", texto);
+
 		
-		 Toast.makeText(SelectPlayers.this, texto, Toast.LENGTH_SHORT).show();
+		return contadorJogadoresSelecionados;
+		 
 	}
 	
 	public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  

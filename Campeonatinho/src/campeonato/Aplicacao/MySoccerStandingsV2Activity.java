@@ -1,8 +1,4 @@
-package campeonato;
-
-
-
-import com.joao.mysoccerstandingsv2.R;
+package campeonato.Aplicacao;
 
 import android.app.TabActivity;
 import android.content.Intent;
@@ -14,10 +10,7 @@ import android.view.MenuItem;
 import android.widget.TabHost;
 import android.widget.Toast;
 
-
-
-
-public class Campeonato extends TabActivity {
+public class MySoccerStandingsV2Activity extends TabActivity {
 
 	/** Called when the activity is first created. */
 	public void onCreate(Bundle savedInstanceState) {
@@ -44,7 +37,7 @@ public class Campeonato extends TabActivity {
     }
 	
 	public void openSelectPlayersLayout(){
-    	Intent playersintent = new Intent(Campeonato.this,SelectPlayers.class);
+    	Intent playersintent = new Intent(MySoccerStandingsV2Activity.this,SelectPlayers.class);
     	startActivity(playersintent);
     }
     
@@ -60,7 +53,7 @@ public class Campeonato extends TabActivity {
 				break;
 			case R.id.about:
 				mensagem = "My Soccer Standings - Version 0.2b";
-		    	Toast.makeText(Campeonato.this, mensagem, Toast.LENGTH_LONG).show();
+		    	Toast.makeText(MySoccerStandingsV2Activity.this, mensagem, Toast.LENGTH_LONG).show();
 				break;
 			default:
 				break;

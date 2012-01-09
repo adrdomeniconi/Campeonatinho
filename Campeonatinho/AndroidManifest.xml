@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="campeonato"
+    package="campeonato.Aplicacao"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -11,7 +11,7 @@
         android:label="@string/app_name" >
         <activity
             android:label="@string/app_name"
-            android:name=".CampeonatoActivity" >
+            android:name=".MySoccerStandingsV2Activity" >
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,7 +19,8 @@
             </intent-filter>
         </activity>
         <activity android:name="SelectPlayers"></activity>
-        <activity android:name=".PlayerFormmmm.PlayerForm"></activity>
+        <activity android:name="PlayerForm"></activity>
+        <activity android:name="TournamentForm"></activity>
     </application>
 
 </manifest>
