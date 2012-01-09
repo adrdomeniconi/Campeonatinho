@@ -44,4 +44,19 @@ public class Utils {
 		Jogador,
 		Torneio
 	}
+	
+	public static String ListaParaConsultaSql(long[] registros) {
+		
+		String ret = " IN (";
+		
+		for(int i = 0 ; i < registros.length ; i++) {
+			ret += registros[i];
+			if(i != registros.length-1)
+				ret += ',';			
+		}
+		
+		ret += ")";
+		
+		return ret;
+	}
 }

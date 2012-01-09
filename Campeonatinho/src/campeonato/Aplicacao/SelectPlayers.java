@@ -1,6 +1,7 @@
 package campeonato.Aplicacao;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import campeonato.Negocio.Jogador;
@@ -28,41 +29,40 @@ public class SelectPlayers extends Activity {
 	private List<Jogador> jogadores;
 	private Button btnNewPlayer;
 	private Button btnCreateTournament;
-	
-	
+
+
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-	    super.onCreate(savedInstanceState);
-	    setContentView(R.layout.selectplayers);
-	    lstPlayerList = (ListView)findViewById(R.id.lstPlayerList);
-	    btnNewPlayer = (Button)findViewById(R.id.btnNewPlayer);
-	    btnCreateTournament = (Button)findViewById(R.id.btnCreateTournament);	    	    
-	    carregarJogadores();    
-	    
-	    registerForContextMenu(lstPlayerList);
-	    
-	    btnNewPlayer.setOnClickListener(new View.OnClickListener() {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.selectplayers);
+		lstPlayerList = (ListView)findViewById(R.id.lstPlayerList);
+		btnNewPlayer = (Button)findViewById(R.id.btnNewPlayer);
+		btnCreateTournament = (Button)findViewById(R.id.btnCreateTournament);
+
+		carregarJogadores();    
+
+		registerForContextMenu(lstPlayerList);
+
+		//Listeners
+
+		btnNewPlayer.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-		    	Intent playerformintent = new Intent(SelectPlayers.this,PlayerForm.class);
-		    	startActivityForResult(playerformintent,1);
+				Intent playerformintent = new Intent(SelectPlayers.this,PlayerForm.class);
+				startActivityForResult(playerformintent,1);
 			}
 		});
-	    
-	    btnCreateTournament.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				obterSelecinados();
-				if (obterSelecinados()<2) {
-					Toast.makeText(SelectPlayers.this, "Please select at least two players!", Toast.LENGTH_SHORT).show();
-				} else {
+
+		btnCreateTournament.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {				
+				if (obterJogadoresSelecinados().size() >= 2)
 					openTournamentForm();
-				}
-				
+				else
+					Toast.makeText(SelectPlayers.this, "Please select at least two players!", 
+							Toast.LENGTH_SHORT).show();
 			}
 		});
-	    
-	    
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -71,17 +71,19 @@ public class SelectPlayers extends Activity {
 			carregarJogadores();
 		}
 	}
-	
-	
+
+
 	private void openTournamentForm(){
-		Intent tournamentformintent = new Intent(SelectPlayers.this,TournamentForm.class);
-    	startActivity(tournamentformintent);
+		Intent tournamentForm = new Intent(SelectPlayers.this,TournamentForm.class);
+		tournamentForm.putExtra("campeonato.Aplicacao.JogadoresSelecionados", 
+				obterJogadoresSelecinados().toArray());
+		startActivity(tournamentForm);
 	}
-	
+
 	private void carregarJogadores(){
 		CarregarJogador cj = new CarregarJogador(this);
-	    jogadores = cj.CarregarJogadoresSalvos();
-	    createPlayerList();
+		jogadores = cj.CarregarJogadoresSalvos();
+		createPlayerList();
 	}
 
 
@@ -90,65 +92,59 @@ public class SelectPlayers extends Activity {
 		ArrayAdapter<Jogador> adapter = new ArrayAdapter<Jogador>(SelectPlayers.this, android.R.layout.simple_list_item_multiple_choice, jogadores);
 		lstPlayerList.setAdapter(adapter);
 	}
-	
-	private int obterSelecinados(){
+
+	private List<Long> obterJogadoresSelecinados(){
 		
-		long[] ids = lstPlayerList.getCheckItemIds();
-		String texto =" "; 
-		Jogador jogadorAtual;
-		int idAtual;
-		int contadorJogadoresSelecionados = 0;
-				
-		int i;
-		for(i = 0 ; i < ids.length ; i++) {
-			jogadorAtual = (Jogador)(lstPlayerList.getItemAtPosition((int)ids[i]));
-			idAtual = (int)jogadorAtual.Id();
-			texto = texto + idAtual + ", ";
-		}
-		contadorJogadoresSelecionados=ids.length;	
-		texto= texto + "Foram selecionados " + contadorJogadoresSelecionados;
+		List<Long> idsJogadores = new LinkedList<Long>();		
+		long[] posicoes = lstPlayerList.getCheckItemIds();
+		String texto = new String();
+		
+		//Obtém os objetos dos jogadores selecionados.
+		for(int i = 0 ; i < posicoes.length ; i++)
+			idsJogadores.add(((Jogador)(lstPlayerList.getItemAtPosition((int)posicoes[i]))).Id());		
+		
+		texto= texto + "Foram selecionados " + idsJogadores.size();
 		Log.d("SelectPlayers", texto);
 
-		
-		return contadorJogadoresSelecionados;
-		 
+		return idsJogadores;
+	}
+
+	public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  
+		super.onCreateContextMenu(menu, v, menuInfo);
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+		Adapter adapter = lstPlayerList.getAdapter();
+		String selectedplayer = adapter.getItem(info.position).toString();	    
+
+		menu.setHeaderTitle(selectedplayer);  
+		menu.add(0, v.getId(), 0, "Edit");  
+		menu.add(0, v.getId(), 0, "Delete");  
+	}  
+
+	public boolean onContextItemSelected(MenuItem item) {  
+		if(item.getTitle()=="Edit"){editPlayer(item.getItemId());}  
+		else if(item.getTitle()=="Delete"){deletePlayer(item.getItemId());}  
+		else {return false;}  
+		return true;  
+	}  
+
+	public void editPlayer(int id){  
+		openPlayerForm();
 	}
 	
-	public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  
-	    super.onCreateContextMenu(menu, v, menuInfo);
-	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-	    Adapter adapter = lstPlayerList.getAdapter();
-	    String selectedplayer = adapter.getItem(info.position).toString();	    
-	    			
-	        menu.setHeaderTitle(selectedplayer);  
-	        menu.add(0, v.getId(), 0, "Edit");  
-	        menu.add(0, v.getId(), 0, "Delete");  
-	    }  
-	
-	 public boolean onContextItemSelected(MenuItem item) {  
-	        if(item.getTitle()=="Edit"){editPlayer(item.getItemId());}  
-	        else if(item.getTitle()=="Delete"){deletePlayer(item.getItemId());}  
-	        else {return false;}  
-	    return true;  
-	    }  
-	  
-	    public void editPlayer(int id){  
-	    	openPlayerForm();
-	    }  
-	    public void deletePlayer(int id){
-	    	final AlertDialog.Builder b = new AlertDialog.Builder(this);
-	    	b.setIcon(android.R.drawable.ic_dialog_alert);
-	    	b.setTitle("Delete Player");
-	    	b.setMessage("Are you sure?");
-	    	b.setPositiveButton("Yes", null);
-	    	b.setNegativeButton("No", null);
-	    	b.show();
-	    }  
-	   
-	    
-    public void openPlayerForm(){
-    	Intent playerformintent = new Intent(SelectPlayers.this,PlayerForm.class);
-    	startActivity(playerformintent);
-    }
+	public void deletePlayer(int id){
+		final AlertDialog.Builder b = new AlertDialog.Builder(this);
+		b.setIcon(android.R.drawable.ic_dialog_alert);
+		b.setTitle("Delete Player");
+		b.setMessage("Are you sure?");
+		b.setPositiveButton("Yes", null);
+		b.setNegativeButton("No", null);
+		b.show();
+	}  
+
+
+	public void openPlayerForm(){
+		Intent playerformintent = new Intent(SelectPlayers.this,PlayerForm.class);
+		startActivity(playerformintent);
+	}
 
 }
