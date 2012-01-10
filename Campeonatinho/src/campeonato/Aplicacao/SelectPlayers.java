@@ -1,6 +1,7 @@
 package campeonato.Aplicacao;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -75,8 +76,19 @@ public class SelectPlayers extends Activity {
 
 	private void openTournamentForm(){
 		Intent tournamentForm = new Intent(SelectPlayers.this,TournamentForm.class);
-		tournamentForm.putExtra("campeonato.Aplicacao.JogadoresSelecionados", 
-				obterJogadoresSelecinados().toArray());
+		
+		List<Long> listaIdsSelecionados = obterJogadoresSelecinados();
+		
+		//Converte de Long pra long (pois o intent não reconheceu o Long).
+		long[] idsSelecionados = new long[listaIdsSelecionados.size()];
+		Iterator<Long> iter = listaIdsSelecionados.iterator();
+		int i = 0;
+		while(iter.hasNext()) {
+			idsSelecionados[i] = Long.parseLong(iter.next().toString());
+			i++;
+		}		
+		
+		tournamentForm.putExtra("campeonato.Aplicacao.JogadoresSelecionados", idsSelecionados);
 		startActivity(tournamentForm);
 	}
 

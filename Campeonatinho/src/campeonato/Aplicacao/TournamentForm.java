@@ -48,8 +48,10 @@ public class TournamentForm extends Activity {
 		
 		String nome = edtTournamentName.getText().toString();
 		boolean idaVolta = false; //TODO: Usar os valores da combo, ou criar um botão de rádio.
-		List<Jogador> jogadores = ObterJogadoresSelecionados(
-				getIntent().getLongArrayExtra("campeonato.Aplicacao.JogadoresSelecionados"));		
+		
+		long[] idsSelecionados = getIntent().getLongArrayExtra("campeonato.Aplicacao.JogadoresSelecionados");
+		
+		List<Jogador> jogadores = ObterJogadoresSelecionados(idsSelecionados);		
 		
 		//Cria o campeonato e o Salva no banco de Dados.
 		Campeonato campeonato = new Campeonato(nome, idaVolta, jogadores, TournamentForm.this);

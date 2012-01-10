@@ -58,7 +58,7 @@ public List<Jogador> CarregarJogadoresPorIds(long[] idsJogadores) {
 		
 		String query = "select * "
 					 + "from " + TbJogador.NOME_TABELA
-					 + "where " + TbJogador.IdJogador + Utils.ListaParaConsultaSql(idsJogadores);
+					 + " where " + TbJogador.IdJogador + Utils.ListaParaConsultaSql(idsJogadores);
 		
 		open();
 		cursor = db.rawQuery(query, null);		

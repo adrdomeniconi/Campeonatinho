@@ -49,6 +49,8 @@ public class Campeonato {
 	//Método chamado apenas na CRIAÇÃO do campeonato.
 	private void AdicionarJogadores(List<Jogador> jogadores) {
 		
+		//TODO: Há algum problema nesse método.
+		
 		SalvarCampeonatoJogador salvar = new SalvarCampeonatoJogador(contexto);
 		long sucesso;
 		Jogador jogadorAtual;
