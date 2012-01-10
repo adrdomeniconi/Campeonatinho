@@ -5,6 +5,7 @@ import campeonato.Persistencia.DbAdapter;
 import campeonato.Persistencia.Entidades.TbJogo;
 import android.content.ContentValues;
 import android.content.Context;
+import android.util.Log;
 
 public class SalvarJogo extends DbAdapter {
 
@@ -22,6 +23,9 @@ public class SalvarJogo extends DbAdapter {
 		
 		open();
 		jogo.Id(db.insert(TbJogo.NOME_TABELA, null, c));
+		
+		Log.d("Jogo salvo", jogo.toString());
+		
 		close();
 	}
 	
@@ -36,6 +40,9 @@ public class SalvarJogo extends DbAdapter {
 		
 		open();
 		db.update(TbJogo.NOME_TABELA, c, TbJogo.IdJogo + "=" + jogo.Id(), null);
+		
+		Log.d("Jogo atualizado", jogo.toString());
+		
 		close();		
 	}		
 }

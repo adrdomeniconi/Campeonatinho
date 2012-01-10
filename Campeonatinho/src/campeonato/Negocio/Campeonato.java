@@ -1,5 +1,6 @@
 package campeonato.Negocio;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -27,7 +28,8 @@ public class Campeonato {
 	
 	//Construtor
 	public Campeonato(String nome, Boolean idaVolta, List<Jogador> jogadores, Context contexto) {
-		jogos = new LinkedList<Jogo>();
+		this.jogos = new LinkedList<Jogo>();
+		this.jogadores = new LinkedList<Jogador>();
 		
 		this.nome = nome;
 		this.idaVolta = idaVolta;
@@ -38,6 +40,12 @@ public class Campeonato {
 		
 		//Salva os jogadores no banco de dados e carrega uma lista em memória com objetos representando as entidades.
 		this.AdicionarJogadores(jogadores);
+		
+		//Gera os jogos do campeonato.
+		this.GerarTabela();
+		
+		//Salva os jogos no banco de dados.
+		this.SalvarJogos();
 	}
 	
 	private void SalvarCampeonato() {
@@ -48,9 +56,7 @@ public class Campeonato {
 	
 	//Método chamado apenas na CRIAÇÃO do campeonato.
 	private void AdicionarJogadores(List<Jogador> jogadores) {
-		
-		//TODO: Há algum problema nesse método.
-		
+				
 		SalvarCampeonatoJogador salvar = new SalvarCampeonatoJogador(contexto);
 		long sucesso;
 		Jogador jogadorAtual;
@@ -63,7 +69,7 @@ public class Campeonato {
 			sucesso = salvar.SalvarNovoCampeonatoJogador(jogadorAtual, this.id);
 			
 			if(sucesso > 0)
-				jogadores.add(new Jogador(jogadorAtual.Id(), (byte)(jogadores.size()+1), jogadorAtual.Nome()));
+				this.jogadores.add(new Jogador(jogadorAtual.Id(), (byte)(this.jogadores.size()+1), jogadorAtual.Nome()));
 		}
 	}
 	
@@ -109,7 +115,7 @@ public class Campeonato {
 	}
 	
 	//Preenche a lista de jogos
-	public void GerarTabela() {		
+	private void GerarTabela() {		
 		
 		//Gera uma matriz para controle dos jogos gerados
 		tabela = new short[(byte)jogadores.size()][(byte)jogadores.size()];
@@ -118,8 +124,6 @@ public class Campeonato {
 		
 		if(idaVolta)
 			CriarJogosReturno();
-				
-		SalvarJogos();
 	}
 	
 	private void CriarJogosTurno() {
@@ -220,16 +224,10 @@ public class Campeonato {
 	//Salva os jogos no momento da CRIAÇÃO do campeonato.
 	private void SalvarJogos() {
 		
-		Jogo jogoAtual;
-		
 		Iterator<Jogo> iter = jogos.iterator();
-		while(iter.hasNext()) {
-			
-			jogoAtual = (Jogo)iter.next();
-			
-			jogoAtual.SalvarNovo(this.id, contexto);
-		}
 		
+		while(iter.hasNext())			
+			iter.next().SalvarNovo(this.id, contexto);		
 	}
 	
 	public List<Jogador> ObterClassificacao() {

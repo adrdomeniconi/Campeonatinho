@@ -22,6 +22,7 @@ public class Jogo {
 		
 		mandante.ZerarTempoAusente();
 		visitante.ZerarTempoAusente();
+		realizado = false;
 		
 		this.mandante = mandante;
 		this.visitante = visitante;
